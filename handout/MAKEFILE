@@ -1,0 +1,18 @@
+CHAPTERS_MD := $(wildcard chapters/*.md)
+CHAPTERS_TEX := $(patsubst chapters/%.md, out/%.tex, $(CHAPTERS_MD))
+
+PANDOC_FLAGS := --citeproc
+
+.PHONY: clean
+
+out:
+	mkdir out
+
+out/%.tex: chapters/%.md
+	pandoc $(PANDOC_FLAGS) -o $@ $<
+
+handout: handout.tex $(CHAPTERS_TEX)
+	pdflatex -output-directory=out handout.tex
+
+clean:
+	rm -f out/*
