@@ -1,7 +1,7 @@
 SRCS := $(wildcard src/*.md)
 CHAPTERS := $(patsubst src/%.md, out/%.tex, $(SRCS))
 
-PANDOC_FLAGS := --citeproc
+PANDOC_FLAGS := --citeproc --lua-filter=filters/callout2latex.lua
 
 .PHONY: all
 .PHONY: clean
