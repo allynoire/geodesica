@@ -90,6 +90,9 @@ This also gives us a formula for the area of a spherical triangle where
 
 $$A(\triangle) = \alpha + \beta + \gamma - \pi$$
 
+
+
+
 ## Constructing regular tesselations
 
 ### Hosohedron

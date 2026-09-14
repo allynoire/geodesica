@@ -1,8 +1,13 @@
 # Introduction
 
-> [!definition] test
-> this is a callout
-> this is a test
+A *tessellation* (or Tiling) is the process of covering a surface with geometrical shapes so that there are no gaps or overlaps. The shapes used in a tiling are called *tiles*. A tiling can be made up of one unique or several different tiles. The possibilities of tessellating a surface seem virtually limitless. In the following we are only discussing polygonal edge-to-edge tilings, where tiles are restricted to be polygons which must align with each other on their edges such that they share common vertices.
+
+In this series we take a look a closer look at uniform tilings of surfaces with different geometry. Our goal is to understand the geometric properties of the (flat) euclidean plane, the sphere, as well as the hyperbolic plane. 
+
+
+
+
+
 
 ## Definitions
 
@@ -20,3 +25,5 @@
 
 https://en.wikipedia.org/wiki/Quasiregular_polyhedron \\
 https://en.wikipedia.org/wiki/Uniform_tiling
+
+

@@ -97,6 +97,18 @@ c_y &= -\frac{b}{2} = -\frac{n_y}{n_z}
 
 ## Distance Metric 
 
+The distance between two points on a sphere is given by the minor arc length of a great circle.
+
+
+- [ ] exercise generalise the formula for a sphere with radius $R$
 - [ ] how we measure distance on the sphere
 - [ ] how we measure distance in our model 
 - [ ] area metric
+- [ ] central angle $\Delta \sigma = \mathbf a \cdot \mathbf b$ 
+
+
+## Area of a circle
+
+Let $P$ be a point on the sphere. We define a circle with radius $r$ to be the set of points that are distance $r$ away from $P$
+
+The central angle is given by $\Delta \sigma = \frac{R}{r}$. 

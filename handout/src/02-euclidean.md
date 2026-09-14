@@ -1,4 +1,14 @@
-#  Regular tessellations of the Euclidean Plane
+# Tessellations of the euclidean plane
+
+
+## Uniform Tilings
+
+Uniform tilings are a larger 
+
+>[!DEFINITION] Vertex transitiv
+>A tiling is said to be vertex transitiv if all of its vertices are indistiguishable from each other 
+
+
 
 - [ ] (playful) take some regular polygons, find arrangements to cover the plane without gapsing
 - [ ] what is a tesselation
@@ -10,9 +20,12 @@
 
 ## Regular Tesselations
 
+
 - [ ] platonic tilings
 - [ ] proof that there are only three
 - [ ] Schläfli Symbol {p, q} describes a tiling where q p-gons meet at each vertex
+
+
 
 ## Semi- and Quasi-Regular Tessellations
 
@@ -31,6 +44,11 @@ https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons#Archi
 
 - [ ] I would like to dive deeper into triangle tilings since they’re easier to deal with
 - [ ] they can serve as a basis to construct a variety of uniform tilings through wythoff construction
+
+
+
+$2 \le p, q, r$
+
 
 ## Euler Characteristic
 
