@@ -3,21 +3,25 @@ CHAPTERS := $(patsubst src/%.md, out/%.tex, $(SRCS))
 
 PANDOC_FLAGS := --citeproc --lua-filter=filters/callout2latex.lua
 
-.PHONY: all
-.PHONY: clean
+.PHONY: all clean
 
-all: out/handout.pdf
+all: handout.pdf
 
-out/handout.pdf: handout.tex pandoc.tex $(CHAPTERS)
-	pdflatex -output-directory=out handout.tex
+handout.pdf: out/handout.pdf
+	cp $< $@
 
-out/%.tex: src/%.md out
+out/handout.pdf: handout.tex pandoc.tex $(CHAPTERS) | out
+# 	pdflatex -output-directory=out handout.tex
+	latexmk -pdf -output-directory=out handout.tex
+
+out/%.tex: src/%.md | out
 	pandoc $(PANDOC_FLAGS) -o $@ $<
 
 out:
 	mkdir -p out
 
 clean:
-	rm -f out/*
+	rm -f handout.pdf
+	rm -rf out
 
 
