@@ -55,7 +55,7 @@ n_c = B \times A
 \end{split}
 $$
 
-It is good to be rigerous at this stage with how we define the great circles that form our triangle. We want $\triangle = S_{a+} \cap S_{b+} \cap S_{c+}$. This will proof useful once we get into algorithms to generate tilings. Note this also has to be considered in euclidean geometry when we represent lines in their normal form.
+It is good to be rigorous at this stage with how we define the great circles that form our triangle. We want $\triangle = S_{a+} \cap S_{b+} \cap S_{c+}$. This will proof useful once we get into algorithms to generate tilings. Note this also has to be considered in Euclidean geometry when we represent lines in their normal form.
 
 $$\begin{split}
 \alpha= n_b \cdot n_c \\
@@ -97,7 +97,7 @@ $$A(\triangle) = \alpha + \beta + \gamma - \pi$$
 
 ### Hosohedron
 
-- [ ] Tilings of the sphere by lunes
+
 
 ### Triangle Tilings
 

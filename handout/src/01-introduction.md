@@ -11,9 +11,8 @@ This document serves as a self-study guide that picks up on topics from discrete
 * Orthogonal Projection
 * Stereographic Projection
 
-We highly encourage you to read further into the matter if you are interested. This handout merely scrapes the top of this vast field of mathematics. 
-
-\todo{mention notable mathematicians in this field? (see <tasks/260922-112332.md>)}
+We highly encourage you to read further into the matter if you are interested. This handout merely scrapes the top of this vast field of mathematics.
+\todo{mention notable mathematicians in this field? see (see tasks/260922-112332.md)}
 
 ## Historical Background
 
@@ -37,6 +36,10 @@ A geometry becomes non-Euclidean if we modify the fifth axiom [@cite]. There are
 \todo{When omiting the fifth axiom completely we talk about absolute geometry Faber 1983, pg. 131, }
 
 \todo{State Hilbert's axioms, or mention it as the modern axiomatization, see handout from uni-bielefeld}
+
+## Topology
+
+
 
 ## Gaussian-Curvature
 
@@ -72,19 +75,7 @@ A tiling is said to be *face*-transitive, if all it's tiles are congruent.
 
 A tiling is said to be *edge*-transitive, if 
 
-## Definitions
+### Triangle Tiling
 
-- [ ] **Regular polygon**. A polygon that is equiangular and equilateral.
-- [ ] **Edge transitive**. All edges separate the same type of face.
-- [ ] **Face transitiv**. All faces are the same (shape)
-- [ ] **Vertex transitive**. All vertices are identical (in terms of what faces meet there)
-- [ ] **Tiling**. a covering of the surface without gaps or overlaps with polygons
-    - [ ] we’re only considering edge-to-edge tilings (where polygons edges align to each other) there is another family of tilings that are not edge-to-edge
-- [ ] **Uniform tiling.** A tiling of regular polygons that is vertex transitiv
-- [ ] **Quasi-regular tiling**. A uniform tiling that is edge-transitive
-- [ ] **Regular tiling**: A uniform tiling that is edge- and face-transitiv
-- [ ] **Semi-regular tiling**: A uniform tiling that is neither face- nor edge- transitiv
-- [ ] **Digon.** A polygon with only two vertices.
 
-https://en.wikipedia.org/wiki/Quasiregular_polyhedron \\
-https://en.wikipedia.org/wiki/Uniform_tiling
+
