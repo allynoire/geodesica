@@ -1,26 +1,33 @@
 CONTENT := $(wildcard content/*.tex)
+
 LATEXMK_FLAGS := -pdf -output-directory=out
 LATEXMK_PVC_FLAGS := -pvc -interaction=nonstopmode
-.PHONY: all dev clean
+PANDOC_FLAGS := --verbose
+
+.PHONY: all dev clean md
 
 all: handout.pdf
 
 dev:
 	latexmk $(LATEXMK_PVC_FLAGS) $(LATEXMK_FLAGS) handout.tex
 
-handout.pdf: out/handout.pdf
-	cp $< $@
-
-out/handout.pdf: handout.tex $(CONTENT) | out
-	latexmk $(LATEXMK_FLAGS) handout.tex
-
-out:
-	mkdir -p out
-	mkdir -p out/content
-	mkdir -p out/pandoc
-
 clean:
 	rm -f handout.pdf
 	rm -rf out
 
+out:
+	mkdir -p out
+	mkdir -p out/content
+	mkdir -p out/md
 
+out/handout.pdf: handout.tex $(CONTENT) | out
+	latexmk $(LATEXMK_FLAGS) handout.tex
+
+handout.pdf: out/handout.pdf
+	cp $< $@
+
+
+md: $(patsubst content/%.tex, out/md/%.md, $(CONTENT)) | out
+
+out/md/%.md: content/%.tex | out
+	pandoc $(PANDOC_FLAGS) -o $@ $<
