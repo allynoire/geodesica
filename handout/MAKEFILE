@@ -1,5 +1,4 @@
-SRCS := $(wildcard src/*.md)
-CHAPTERS := $(patsubst src/%.md, out/%.tex, $(SRCS))
+CONTENT := $(wildcard content/*.tex)
 
 PANDOC_FLAGS := --citeproc --lua-filter=filters/callout2latex.lua
 
@@ -10,15 +9,13 @@ all: handout.pdf
 handout.pdf: out/handout.pdf
 	cp $< $@
 
-out/handout.pdf: handout.tex pandoc.tex $(CHAPTERS) | out
-# 	pdflatex -output-directory=out handout.tex
+out/handout.pdf: handout.tex $(CONTENT) | out
 	latexmk -pdf -output-directory=out handout.tex
-
-out/%.tex: src/%.md | out
-	pandoc $(PANDOC_FLAGS) -o $@ $<
 
 out:
 	mkdir -p out
+	mkdir -p out/content
+	mkdir -p out/pandoc
 
 clean:
 	rm -f handout.pdf

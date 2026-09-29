@@ -1,0 +1,226 @@
+\section{Tessellations of the sphere}\label{tessellations-of-the-sphere}
+
+To begin our journey into non-euclidean geometries we will first look at
+geometry of the sphere. Understanding spherical geometry will give us
+helpful insights to understand and interpret hyperbolic geometry.
+
+\subsection{Geometry on the sphere}\label{geometry-on-the-sphere}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  Geodesics (what is the shortest path on the sphere)
+\item[$\square$]
+  Antipodal
+\item[$\square$]
+  Dihedral Angle
+\end{itemize}
+
+\subsubsection{Great Circles}\label{great-circles}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  Todo, definition for the unit sphere \(S\) and representation of
+  planes by unit normal vectors \(\hat n\)
+\end{itemize}
+
+A great circle is given by the intersection of the sphere with a plane
+through it's center. For any two points on the great circle the arc
+formed between them is the shortest path the sphere.
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  Show that this intersection is actually a circle?
+\end{itemize}
+
+Let \(A, B\) be two points on the sphere. The normal vector of a great
+circle through \(A\) and \(B\) is given by the cross product
+\(\vec{A} \times \vec{B}\).
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  We proof that arcs of great circles form the shortest path between two
+  points
+\item[$\square$]
+  Note that normal vectors on the xy-plane form great circles through
+  the north and south pole of the sphere.
+\item[$\square$]
+  The perpendicular line to a great circle through it's center is called
+  it's axis
+\item[$\square$]
+  The two point intersection of a great circles axis with the sphere are
+  called it's poles.
+\item[$\square$]
+  A great circle splits the sphere into two hemispheres
+\end{itemize}
+
+Let \(x \in S\) be the elements of a sphere and \(\hat{n}\) the unit
+normal vector of a great circle. The great circle partitions the sphere
+into two hemispheres:
+
+\begin{itemize}
+\tightlist
+\item
+  A positive hemisphere \(S_+ = \set{x \in S: x \cdot \hat{n} > 0}\),
+\item
+  a negative hemisphere \(S_- = \set{x \in S: x \cdot \hat n < 0}\),
+\end{itemize}
+
+\subsubsection{Spherical Lunes}\label{spherical-lunes}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  Special case of a digon
+\item[$\square$]
+  Polygon with two vertices (possible in S, degenerate in E)
+\end{itemize}
+
+Let \(g_1, g_2\) be two great circles and \(n_1, n_2\) their respective
+unit normal vectors. The two cricles intersect at an angle \(\theta\)
+given by \(cos(\theta) = \hat n_1 \cdot \hat n_2\). Let
+\(S_{1+}, S_{2+}\) be the positive hemisphere given by the great
+circles. We define a spherical lune \(L\) to be the wedge shaped
+intersection of the two hemispheres \(L = S_{1+} \cap S_{2+}\).
+
+The area of a lune is given by it's angle \(A(L_\theta) = 2\theta r^2\).
+A proof is left as an exercise to the reader :) This fact will proof
+useful later.
+
+Note that the intersection \(L’ = S_{1-} \cap S_{2-}\) is a congruent
+antipodal lune to \(L\). Meaning \(A(L_\theta) = A(L_\theta’)\).
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  Not sure if we should add this. It is rigorous but also obfuscating
+  the point a lot
+
+  \begin{itemize}
+  \tightlist
+  \item[$\square$]
+    \(\overline{L} = \overline{S_{1+}} \cap \overline{S_{2+}}\) lune
+    including boundary
+  \item[$\square$]
+    \(A(L) = A(\overline{L})\) including boundary does not change area
+  \end{itemize}
+\end{itemize}
+
+\paragraph{Spherical Triangles}\label{spherical-triangles}
+
+Let \(A, B, C \in S\) be points on the unit sphere forming the vertices
+of a spherical triangle. It's edges \(a,b,c\) are given by great circles
+with respective unit normal vectors \(\hat n_a, \hat n_b, \hat n_c\)
+with
+
+\[\begin{split}
+n_a = C \times B \\
+n_b = A \times C \\
+n_c = B \times A
+\end{split}
+\]
+
+It is good to be rigorous at this stage with how we define the great
+circles that form our triangle. We want
+\(\triangle = S_{a+} \cap S_{b+} \cap S_{c+}\). This will proof useful
+once we get into algorithms to generate tilings. Note this also has to
+be considered in Euclidean geometry when we represent lines in their
+normal form.
+
+\[\begin{split}
+\alpha= n_b \cdot n_c \\
+\beta = n_c \cdot n_b \\
+\gamma = n_a \cdot n_b
+\end{split}\]
+
+The angle sum of a spherical triangle is greater than \(\pi\). There is
+an elegant proof to show this.
+
+The unit normal vectors are non-colinear and non-planar if and only if
+A, B, C span a triangle. This is exactly the case when the scalar triple
+product \([n_a, n_b, n_c] = n_a \cdot (n_b \times n_c) > 0\).
+
+Let us construct the spherical lunes \(L_\alpha, L_\beta, L_\gamma\) and
+their antipodal counterparts \(L_\alpha’, L_\beta’, L_\gamma’\). Note
+that each lune contains either the original triangle \(\triangle\) or
+it's antipodal counterpart \(\triangle’\). Note further that we can
+reconstruct the sphere by forming the unions of all lunes
+\(\bigcup \overline{L} = S\).
+
+Summing up the area of all lunes we get back the area of the sphere,
+however overcounting by four areas of our original triangle. Note our
+lemma \(A(L)=A(L’)\) hence \(A(L)+A(L’) = 2A(L)\). Simplifying we get an
+equation for the angle sum.
+
+\[\begin{split}
+2A(L_\alpha) + 2A(L_\beta) + 2A(L_\gamma) &= 4 \pi r^2 + 4A(\triangle) \\
+&\Downarrow \\
+A(L_\alpha) + A(L_\beta) + A(L_\gamma) &= 2 \pi r^2 + 2A(\triangle) \\
+&\Downarrow \\
+2\alpha r^2 + 2\beta r^2 + 2\gamma r^2 &= 2\pi r^2 + 2A(\triangle) \\
+&\Downarrow \\
+\alpha + \beta + \gamma &= \pi + \frac{A(\triangle)}{r^2}
+\end{split}\]
+
+This gives us a nice equation for the angle sum in relation to the
+triangles area. Let us consider the area bounds of a spherical triangle.
+It is clear that the area of a triangle must be greater than 0 and
+cannot exceed \(2\pi\). Therefore \(0 < T < 2\pi\)
+
+Further we get a bound on the angle sum
+\(\pi < \alpha + \beta + \gamma < 3\pi\).
+
+This also gives us a formula for the area of a spherical triangle where
+
+\[A(\triangle) = \alpha + \beta + \gamma - \pi\]
+
+\subsection{Constructing regular
+tesselations}\label{constructing-regular-tesselations}
+
+\subsubsection{Hosohedron}\label{hosohedron}
+
+\subsubsection{Triangle Tilings}\label{triangle-tilings}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  split hosohedron along equator
+\item[$\square$]
+  combinations for pqr with angle sum constraint
+\end{itemize}
+
+\subsubsection{Regular and Uniform
+Tesselations}\label{regular-and-uniform-tesselations}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  Dual graphs on triangle tilings
+
+  \begin{itemize}
+  \tightlist
+  \item[$\square$]
+    already getting into kaleidoscope construction through symmetry
+    groups?
+  \end{itemize}
+\end{itemize}
+
+\subsection{Excursion Polyhedra}\label{excursion-polyhedra}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  Tilings of the sphere give us graphs of 3d polyhedra sharing same
+  symmetries and duality
+
+  \begin{itemize}
+  \tightlist
+  \item[$\square$]
+    Platonic solids
+  \item[$\square$]
+    Prisms
+  \end{itemize}
+\end{itemize}

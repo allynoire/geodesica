@@ -1,0 +1,154 @@
+\section{Tessellations of the euclidean
+plane}\label{tessellations-of-the-euclidean-plane}
+
+\subsection{Uniform Tilings}\label{uniform-tilings}
+
+Uniform tilings are a larger
+
+\begin{definition}[Vertex transitiv]
+
+A tiling is said to be vertex transitiv if all of its vertices are
+indistiguishable from each other
+
+\end{definition}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  (playful) take some regular polygons, find arrangements to cover the
+  plane without gapsing
+\item[$\square$]
+  what is a tesselation
+\item[$\square$]
+  what makes it regular
+\end{itemize}
+
+\subsection{Tilings of the plane}\label{tilings-of-the-plane}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  definition face, edge, vertex transitivity
+\end{itemize}
+
+\subsection{Regular Tesselations}\label{regular-tesselations}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  platonic tilings
+\item[$\square$]
+  proof that there are only three
+\item[$\square$]
+  Schläfli Symbol \{p, q\} describes a tiling where q p-gons meet at
+  each vertex
+\end{itemize}
+
+\subsection{Semi- and Quasi-Regular
+Tessellations}\label{semi--and-quasi-regular-tessellations}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  archimedian tilings
+
+  \begin{itemize}
+  \tightlist
+  \item[$\square$]
+    most are semi-regular derived by truncation
+  \item[$\square$]
+    3.6.3.6 is the only quasi-regular archimedian tiling
+  \end{itemize}
+\item[$\square$]
+  in a later chapter we can derive semi-regular tilings by truncating,
+  and quasi-regular tilings by rectifiying regular tilings.
+\end{itemize}
+
+https://en.wikipedia.org/wiki/Euclidean\_tilings\_by\_convex\_regular\_polygons\#Archimedean,\_uniform\_or\_semiregular\_tilings
+
+\subsection{Quasi-Regular
+Tessellations}\label{quasi-regular-tessellations}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  in a later chapter we can derive quasi regular tilings by rectifying
+\end{itemize}
+
+\subsection{Tessellation with Möbius
+Triangles}\label{tessellation-with-muxf6bius-triangles}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  requires discussion about angle sum
+\end{itemize}
+
+A triangle tiling is a tiling made from Schwarz triangles.
+
+A \emph{Möbius triangle} is a triangle defined by the three tuple
+\((p q r) \in \mathbb{Z}^3\), which represent it's internal angles. The
+angle at each vertex are given by
+
+\[
+\begin{matrix}
+\alpha = \frac{\pi}{p} & \beta = \frac{\pi}{q} & \gamma = \frac{\pi}{r}
+\end{matrix}
+\]
+
+Not all choices for \((p q r)\) yield a valid triangle. Must must ensure
+that the angles form a valid internal angle sum. For a triangle in the
+Euclidean Plane the angles must add up to \(\pi\), hence (p, q, r)
+define a Euclidean triangle exactly when
+
+\[
+\alpha + \beta + \gamma = \pi \Rightarrow
+\frac{1}{p} + \frac{1}{r} + \frac{1}{q} = 1
+\]
+
+We can tessellate a surface by continuously reflecting a Möbius triangle
+along it's edges.
+
+Note that all permutations of \(p, q, r\) will produce a similar
+triangle and henceforth congruent tilings,
+\((p, q, r) \cong (q, r, p) \cong (r, p, q)\), etc.
+
+\subsubsection{Proof of Existence}\label{proof-of-existence}
+
+Let \(p, q, r \in \mathbb{Z^{+}}\) be the coefficients of a möbius
+triangle. We shall proof for which choices of \(p, q, r\) there exists a
+valid \textbf{Eulcidean} tiling. In order to formulate an exhaustive
+proof, we order the coefficients such that \(p \le q \le r\). This way
+we will cover all unique tilings without repetition.
+
+Our strategy in this proof is to consequtively limit the number of
+choices for each coefficient and make a case by case analysis for each
+one.
+
+In Euclidean geomerty the angle sum of a triangle is \(\pi\), therefore
+\(\frac{1}{p} + \frac{1}{q} + \frac{1}{r} = 1\) \{\#eq:test\}.
+
+We want \(p\) to assume the its lowest possible values, i.e.~to
+represent the largest possible angle in our triangle. As a lower bound
+we have \(2 \le p\), since if \(p\) was one, the other coefficients
+would have to be 0. Our upper bound is reached when \(p = q = r\),
+therefore if we apply (\textbf{eq:test?}) we get \(p \le 3\).
+
+We have now have found our values for \(p \in \{ 2, 3 \}\).
+
+\textbf{Note}
+
+\subsection{Euler Characteristic}\label{euler-characteristic}
+
+The euler characteristic of a cell division is given by {[}Weeks,
+pp.171{]} Where \(V\) is the number of vertices, \(E\) the number of
+edges and \(F\) the number of faces
+
+\(\chi = V - E + F\)
+
+For polyhedra \(\chi=2\) since they can be embedded on the sphere
+\(\mathbb{S}^2\) {[}Coxeter, pp.~10{]}
+
+The gauss-bonnet formula gives the area of different surfaces
+
+\(A_\text{sphere} = 2\pi\chi\)
