@@ -1,16 +1,18 @@
 CONTENT := $(wildcard content/*.tex)
-
-PANDOC_FLAGS := --citeproc --lua-filter=filters/callout2latex.lua
-
-.PHONY: all clean
+LATEXMK_FLAGS := -pdf -output-directory=out
+LATEXMK_PVC_FLAGS := -pvc -interaction=nonstopmode
+.PHONY: all dev clean
 
 all: handout.pdf
+
+dev:
+	latexmk $(LATEXMK_PVC_FLAGS) $(LATEXMK_FLAGS) handout.tex
 
 handout.pdf: out/handout.pdf
 	cp $< $@
 
 out/handout.pdf: handout.tex $(CONTENT) | out
-	latexmk -pdf -output-directory=out handout.tex
+	latexmk $(LATEXMK_FLAGS) handout.tex
 
 out:
 	mkdir -p out
