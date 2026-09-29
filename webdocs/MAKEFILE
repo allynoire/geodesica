@@ -1,0 +1,34 @@
+CONTENT := ../handout/content
+SRCS := $(wildcard $(CONTENT)/*.tex)
+DOCS := $(patsubst $(CONTENT)/%.tex, public/%.html, $(SRCS))
+
+# NOTE: pandoc needs equal signs in args otherwise it breaks
+PANDOC_FLAGS := \
+	--verbose \
+	--standalone \
+	--katex=vendor/katex/ \
+	--template=src/template.html \
+	--toc \
+	--number-sections
+
+PANDOC_FILTERS := \
+	--lua-filter=filters/extract-title.lua
+
+.PHONY: all clean run
+
+all:
+# 	pandoc $(PANDOC_FLAGS) $(PANDOC_FILTERS) -o $@ $<
+	rm -rf dist
+
+	pandoc -t chunkedhtml --chunk-template=%h.html $(PANDOC_FLAGS) $(PANDOC_FILTERS) -o dist $(SRCS)
+
+	cp src/style.css dist/
+	cp -r src/vendor dist/
+
+
+run:
+	npx serve dist
+
+
+clean:
+	rm -rf dist
