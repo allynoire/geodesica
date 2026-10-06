@@ -1,5 +1,62 @@
-\section{Tessellations of the euclidean
-plane}\label{tessellations-of-the-euclidean-plane}
+\section{Euclidean Plane}\label{tessellations-of-the-euclidean-plane}
+
+In the following we will be revisiting some important properties and concepts we are already familiar. In the subsequent chapters we will see how these properties change in non-Euclidean geometries.
+
+\subsection{Angle sum of a triangle}
+
+The internal angles of a triangle in Euclidean space add up to exactly $\pi$. This is a distinct property of Euclidean space, and we will see that it differs from the angle sum of spherical and hyperbolic triangles. It is in fact equivalent to the parallel postulate.
+
+\todo{proof}
+
+\subsection{Euclidean Metric}
+
+A metric is a function that supplements a set with a notion of distance. A metric space is a pair \((M, d)\) where $M$ is a set of points and $d$ is a function $M \times M \Leftarrow \mathbb{R}$ which satisfies the following conditions for all points $x, y, z \in M$
+
+\begin{enumerate}
+  \item The distance from a point to itself is zero. 
+  \[d(x, x) = 0\]
+  \item{Positivity} The distance between two distinct points is strictly greater than zero.
+  \[d(x, y) > 0\]
+  \item{Symmetry} The distance from $x$ to $y$ is always equal to the distance from $y$ to $x$ 
+  \[d(x, y) = d(y, x)\]
+  \item{Transitivity} 
+  \[d(x, z) \le d(x, y) + d(y, z)\]
+\end{enumerate}
+
+We may define two-dimensional Euclidean space $E^2$ in terms of a \emph{normed} vector space $E^2 = (\mathbb{R}^2, d)$, where $d$ is the Euclidean metric and defined as follows
+
+\[
+d(\mathbf{u}, \mathbf{v}) = ||\mathbf{u} - \mathbf{v}|| = \sqrt{(u_x - v_x)^2 + (u_y - v_y)^2}
+\]
+
+While a vector space has a notion of an origin, Euclidean space does not.
+
+With we can derive a formal definition for certain measures
+
+Circumference of a triangle $a, b, c \in E^2$
+
+\[
+d(a, b) + d(b, c) + d(c, a)
+\]
+
+
+Circumference of a circle with center $C \in E^2$ and radius $r \in \mathbb{R}$
+
+We parametrize the points on the circle with $\lambda: [0, 1] \Leftarrow R^2$
+\[
+\int_0^{2\pi} r d\theta
+\]
+
+
+\todo{Ex. show that $d$ is a metric on $\mathbb{R}^2$}
+
+\subsubsection{Area}
+
+The area of a circle is given by the integral
+
+\[
+\int_0^r 2 \pi t dt = 2\pi \int_0^r t dt = \pi r^2
+\]
 
 \subsection{Uniform Tilings}\label{uniform-tilings}
 
@@ -190,3 +247,7 @@ For polyhedra \(\chi=2\) since they can be embedded on the sphere
 The gauss-bonnet formula gives the area of different surfaces
 
 \(A_\text{sphere} = 2\pi\chi\)
+
+\subsection{Regular Tessellations of $E^2$}
+
+ 
