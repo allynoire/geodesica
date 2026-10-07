@@ -1,20 +1,21 @@
-import { View } from "./js/view.js"
-import { loadShaderSourceAsync } from "./js/loader.js"
+import { View } from './view.js'
+import * as twgl from 'twgl.js'
+
+twgl.setDefaults({ 
+    attribPrefix: 'a_' 
+});
 
 const canvas = document.getElementById('canvas')
-console.log(canvas)
+
 const view = new View({ canvas })
-const vs = await loadShaderSourceAsync("./shader/flat.vert")
-const fs = await loadShaderSourceAsync("./shader/test.frag")
 
 try {
-    view.init(vs, fs)
+    view.init()
     view.attach()
 }
 catch (e) {
     displayError(e)
 }
-
 
 function displayError(message) {
     const error = document.getElementById('error')
