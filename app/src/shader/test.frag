@@ -2,12 +2,12 @@
 
 precision mediump float;
 
-in vec4 COORD;
+in vec2 v_coord;
 
-out vec4 COLOR;
+out vec4 o_color;
 
 void main() {
-    if (0.0 < COORD.x && COORD.x < 1.0 && 0.0 < COORD.y && COORD.y < 1.0) {
-        COLOR = vec4(COORD.xy, 0, 1);
+    if (0.0 < v_coord.x && v_coord.x < 1.0 && 0.0 < v_coord.y && v_coord.y < 1.0) {
+        o_color = vec4(v_coord.xy, 0, 1);
     }
 }

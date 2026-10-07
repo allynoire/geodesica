@@ -7,6 +7,7 @@ import canvasVS from './shader/canvas.vert'
 import testFS from './shader/test.frag'
 import standartFS from './shader/standart.frag'
 import standartVS from './shader/standart.vert'
+import gridFS from './shader/grid.frag'
 
 export class View {
 
@@ -17,10 +18,12 @@ export class View {
         // this.viewMatrix = m4.create()
         this.viewMatrix = m4.create()
         this.invViewMatrix = m4.create()
+        this.resolution = v3.create()
     }
 
     init() {
-        this.program = twgl.createProgramInfo(this.gl, [canvasVS, testFS])
+        this.program = twgl.createProgramInfo(this.gl, [canvasVS, gridFS])
+        console.log(this.program)
         this.vertices = twgl.createBufferInfoFromArrays(this.gl, {
             'indices': [ 0, 1, 2, 3, 1, 2 ],
             'position': [
@@ -48,7 +51,7 @@ export class View {
             position: generate()
         })
 
-        this.sphere = twgl.primitives.createSphereBufferInfo(this.gl, 0.5, 16, 16)
+        this.sphere = twgl.primitives.createSphereBufferInfo(this.gl, 1.0, 64, 64)
 
         this.standartProgramInfo = twgl.createProgramInfo(this.gl, [standartVS, standartFS])
     }
@@ -76,6 +79,10 @@ export class View {
         const w = s * width / width
         const h = s * height / width
 
+        // update resolution
+        this.resolution[0] = width
+        this.resolution[1] = height
+
         // update view matrix
         m4.ortho(
             -w, w,
@@ -97,7 +104,8 @@ export class View {
         const uniforms = {
             u_viewMatrix: this.viewMatrix,
             u_invViewMatrix: this.invViewMatrix,
-            u_time: time
+            u_resolution: this.resolution,
+            u_time: time,
         }
 
         gl.useProgram(this.program.program)

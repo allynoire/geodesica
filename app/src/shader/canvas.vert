@@ -4,11 +4,11 @@
 
 uniform mat4 u_invViewMatrix;
 
-in vec4 a_position;
+in vec3 a_position;
 
-out vec4 COORD;
+out vec2 v_coord;
 
 void main() {
-    COORD = a_position * u_invViewMatrix;
-    gl_Position = a_position;
+    v_coord = (u_invViewMatrix * vec4(a_position, 1)).xy;
+    gl_Position = vec4(a_position, 1);
 }

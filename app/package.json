@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npx vite dev",
     "build": "npx vite build",
-    "serve": "npx vite serve"
+    "serve": "npx serve dist"
   },
   "author": "allynoire",
   "license": "GPL2",
