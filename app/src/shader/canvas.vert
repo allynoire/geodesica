@@ -3,6 +3,7 @@
 /* Shader for a */
 
 uniform mat4 u_invViewMatrix;
+uniform mat4 u_viewMatrix;
 
 in vec3 a_position;
 
