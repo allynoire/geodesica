@@ -2,24 +2,32 @@
 
 uniform mat4 u_viewMatrix;
 uniform mat4 u_projectionMatrix;
-uniform float u_lineWidth;
+uniform vec2 u_resolution;
+uniform float u_lineWidth; // line width in screen space (pixels)
 
-in vec3 a_position; // expected 2d vector
-in vec3 a_normal;
-in float a_side;
+in vec3 a_position; 
+in vec3 a_normal; // expecting 2d vector (nx, ny, 0)
+in float a_side;  // side of the middle this vertex is on
 
 out float v_side;
 out float v_width;
 
 void main() {
+    mat4 mvp = u_projectionMatrix * u_viewMatrix;
     
-    vec4 viewPos = u_viewMatrix * vec4(a_position, 1);
+    // transforming into clip space
+    vec4 pos = mvp * vec4(a_position, 1);
     
-    // displace line width in view space
-    viewPos.xyz += a_normal * a_side * 0.5 * u_lineWidth;
+    // expecting mvp to be uniformly scaled
+    vec2 normal = normalize(mvp * vec4(a_normal, 0)).xy; 
+    
+    vec2 pixelWidth = 2.0 / u_resolution;
+
+    // offset the vertex from the middle line
+    pos.xy += normal * a_side * (0.5 * u_lineWidth) * pixelWidth;
 
     v_side = a_side;
     v_width = u_lineWidth;
 
-    gl_Position = u_projectionMatrix * viewPos;
+    gl_Position = pos;
 }

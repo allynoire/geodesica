@@ -523,13 +523,34 @@ class DrawLine {
     init(gl) {
         this.programInfo = twgl.createProgramInfo(gl, [lineVS, lineFS])
 
-        const points = [
-            v3.create(0, 0, 0),
-            v3.create(0.7, 0, 0),
-            v3.create(0.5, 0.8, 0),
-            v3.create(0.5, 1.0, 0),
-            v3.create(-2.0, -2.0, 0)
-        ]
+        // const points = [
+        //     v3.create(0, 0, 0),
+        //     v3.create(0.7, 0, 0),
+        //     v3.create(0.5, 0.8, 0),
+        //     v3.create(0.5, 1.0, 0),
+        //     v3.create(-2.0, -2.0, 0)
+        // ]
+
+        const triangle = createDiskModelTriangle(
+            v3.create(0, 0.5, 0),
+            v3.create(-0.5, -0.5, 0),
+            v3.create(0.5, -0.5, 0),
+            40
+        )
+
+        const points = []
+        for (let i = 0; i < triangle.length; i += 3) {
+            points.push(v3.create(
+                triangle[i],
+                triangle[i+1],
+                triangle[i+2],
+            ))
+        }
+        points.push(v3.create(
+            triangle[0],
+            triangle[1],
+            triangle[2]
+        ))
 
         this.bufferInfo = twgl.createBufferInfoFromArrays(gl,
             createLineMesh(points)
@@ -543,7 +564,7 @@ class DrawLine {
         gl.useProgram(this.programInfo.program)
         twgl.setUniforms(this.programInfo, {
             ...globalUniforms,
-            u_lineWidth: 0.01,
+            u_lineWidth: 10,
             u_lineColor: v3.create(0.5, 0.6, 0.2)
         })
         twgl.setBuffersAndAttributes(gl, this.programInfo, this.bufferInfo)
