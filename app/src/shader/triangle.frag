@@ -49,7 +49,7 @@ void main() {
     vec2 pos = v_coord;
     
     // discard if outside the unit circle
-    // if (dot(pos, pos) > 1.0) { discard; }
+    if (dot(pos, pos) > 1.0) { discard; }
 
     // find min distance
     float dist = min(

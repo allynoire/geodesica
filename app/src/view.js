@@ -1,7 +1,7 @@
 import * as twgl from 'twgl.js'
 import { v3, m4 } from 'twgl.js';
 import { boundsCircularArc, boundsLineSegment, createDiskModelGeodesic, createDiskModelTriangle, distancePointCircle, distancePointLine } from './meshing';
-import { randRange } from './utility';
+import { randRange, randVec } from './utility';
 import earcut, { refine } from 'earcut';
 import { Batch } from './batch';
 
@@ -37,15 +37,29 @@ export class View {
         ]
 
         // this.triangleRenderer = new TriangleMeshRenderer(90)
-        this.triangleRenderer = new TriangleImplicitRenderer()
+        // this.triangleRenderer = new TriangleImplicitRenderer()
+        this.renderers = []
+
+        for (let i = 0; i < 1000; i++) {
+            this.renderers.push(new TriangleImplicitRenderer())
+            // this.renderers.push(new TriangleMeshRenderer(30))
+        }
     }
 
     init() {
         
-        this.gl.enable(this.gl.CULL_FACE)
-        this.program = twgl.createProgramInfo(this.gl, [canvasVS, gridFS])
+        const gl = this.gl
 
-        this.vertices = twgl.createBufferInfoFromArrays(this.gl, {
+        gl.enable(gl.CULL_FACE)
+
+        this.programs = twgl.createProgramInfos(gl, {
+            point: [pointVS, pointFS],
+            triangle: [geometryVS, triangleFS],
+            standart: [standartVS, standartFS],
+            grid: [canvasVS, gridFS]
+        })
+
+        this.quadInfo = twgl.createBufferInfoFromArrays(this.gl, {
             indices: [ 0, 1, 2, 1, 3, 2 ],
             position: [
                 -1, -1, 0, // bottom left
@@ -54,8 +68,6 @@ export class View {
                 1, 1, 0,   // top right
             ]
         })
-
-        this.point_program = twgl.createProgramInfo(this.gl, [pointVS, pointFS])
 
         const point_vertices = []
         const N = 10
@@ -74,23 +86,10 @@ export class View {
 
         this.sphere = twgl.primitives.createSphereBufferInfo(this.gl, 1.0, 64, 64)
 
-        this.standartProgramInfo = twgl.createProgramInfo(this.gl, [standartVS, standartFS])
-    
-        this.batch.init(this.gl)
 
-        const circle = []
-        const n = 10
-        const r = 0.5
-        for (let i = 0; i < n; i++) {
-            const t = i / n * Math.PI * 2.0
-            const x = r * Math.cos(t)
-            const y = r * Math.sin(t)
-            circle.push(x, y, 0)
+        for (const renderer of this.renderers) {
+            renderer.init(this.gl, this.programs)
         }
-        
-
-        this.triangleRenderer.init(this.gl)
-    
     }
 
     attach() {
@@ -162,17 +161,17 @@ export class View {
         if (ev instanceof KeyboardEvent) {
             // if (ev.repeat) { return1 }
 
-            switch (ev.key) {
-            case '1': 
-                this.triangleRenderer.setABC({a: this.cursorPosition})
-                break
-            case '2':
-                this.triangleRenderer.setABC({b: this.cursorPosition})
-                break
-            case '3':
-                this.triangleRenderer.setABC({c: this.cursorPosition})
-                break
-            }
+            // switch (ev.key) {
+            // case '1': 
+            //     this.triangleRenderer.setABC({a: this.cursorPosition})
+            //     break
+            // case '2':
+            //     this.triangleRenderer.setABC({b: this.cursorPosition})
+            //     break
+            // case '3':
+            //     this.triangleRenderer.setABC({c: this.cursorPosition})
+            //     break
+            // }
 
         }
     }
@@ -215,10 +214,7 @@ export class View {
 
         const gl = this.gl
 
-        // m4.rotationZ(time * 1e-3, this.viewMatrix)
-        
         m4.inverse(this.viewMatrix, this.invViewMatrix)
-
 
         const globalUniforms = {
             u_projectionMatrix: this.projectionMatrix,
@@ -229,31 +225,25 @@ export class View {
             u_time: time,
         }
 
-        gl.useProgram(this.program.program)
-        twgl.setUniforms(this.program, globalUniforms)
-        twgl.setBuffersAndAttributes(gl, this.program, this.vertices);
-        twgl.drawBufferInfo(gl, this.vertices);
+        gl.useProgram(this.programs.grid.program)
+        twgl.setUniforms(this.programs.grid, globalUniforms)
+        twgl.setBuffersAndAttributes(gl, this.programs.grid, this.quadInfo);
+        twgl.drawBufferInfo(gl, this.quadInfo);
 
-    
-        const t = time * 0.001
-        // this.triangleRenderer.setABC({
-        //     c: v3.create(Math.cos(t), Math.sin(t), 0)
-        // })
-
-        this.triangleRenderer.render(gl, globalUniforms)
+        for (const renderer of this.renderers) {
+            renderer.setABC({
+                a: randVec(),
+                b: randVec(),
+                c: randVec()
+            })
+            renderer.render(gl, globalUniforms)
+        }
        
-
-        // Draw points
-        // gl.useProgram(this.point_program.program)
-        // twgl.setUniforms(this.point_program, globalUniforms)
-        // twgl.setBuffersAndAttributes(gl, this.point_program, this.points)
-        // twgl.drawBufferInfo(gl, this.points, gl.POINTS)
-
-        setTimeout(() => {
-            requestAnimationFrame((time) => this.render(time))
-        }, 10)
+        // setTimeout(() => {
+        //     requestAnimationFrame((time) => this.render(time))
+        // }, 1000)
         
-        // requestAnimationFrame((time) => this.render(time))
+        requestAnimationFrame((time) => this.render(time))
     }
 
     displayToWorld(x, y) {
@@ -390,8 +380,8 @@ class TriangleImplicitRenderer {
         this.dirty = true
     }
 
-    init(gl) {
-        this.programInfo = twgl.createProgramInfo(gl, [geometryVS, triangleFS])
+    init(gl, programs) {
+        this.programInfo = programs.triangle
         this.bufferInfo = twgl.createBufferInfoFromArrays(gl, {
             indices: [ 0, 1, 2, 1, 3, 2 ],
             position: [

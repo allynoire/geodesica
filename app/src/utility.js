@@ -17,3 +17,13 @@ export function deleteBufferInfo(gl, bufferInfo) {
 export function randRange(a, b) {
     return (b-a) * Math.random() + a
 }
+
+export function randVec() {
+    const t = randRange(0, Math.PI * 2)
+    const r = randRange(0, 1)
+    return twgl.v3.create(
+        r * Math.cos(t),
+        r * Math.sin(t),
+        0
+    )
+}
