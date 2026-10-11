@@ -1,6 +1,6 @@
 import * as twgl from 'twgl.js'
 import { v3, m4 } from 'twgl.js';
-import { boundsCircularArc, boundsLineSegment, createDiskModelGeodesic, createDiskModelTriangle, distancePointCircle, distancePointLine } from './meshing';
+import { boundsCircularArc, boundsLineSegment, createDiskModelGeodesic, createDiskModelTriangle, createLineMesh, distancePointCircle, distancePointLine } from './meshing';
 import { randRange, randVec } from './utility';
 import earcut, { refine } from 'earcut';
 import { Batch } from './batch';
@@ -14,6 +14,8 @@ import standartVS from './shader/standart.vert'
 import gridFS from './shader/grid.frag'
 import geometryVS from './shader/geometry.vert'
 import triangleFS from './shader/triangle.frag'
+import lineVS from './shader/line.vert'
+import lineFS from './shader/line.frag'
 
 export class View {
 
@@ -44,13 +46,15 @@ export class View {
             this.renderers.push(new TriangleImplicitRenderer())
             // this.renderers.push(new TriangleMeshRenderer(30))
         }
+
+        this.renderers.push(new DrawLine())
     }
 
     init() {
         
         const gl = this.gl
 
-        gl.enable(gl.CULL_FACE)
+        // gl.enable(gl.CULL_FACE)
 
         this.programs = twgl.createProgramInfos(gl, {
             point: [pointVS, pointFS],
@@ -493,7 +497,6 @@ class TriangleImplicitRenderer {
         twgl.drawBufferInfo(gl, this.bufferInfo, gl.TRIANGLE)
 
         gl.disable(gl.BLEND)
-
     }
 
     setABC({a, b, c}) {
@@ -509,5 +512,42 @@ class TriangleImplicitRenderer {
             v3.copy(c, this.c)
             this.dirty = true
         }
+    }
+}
+
+class DrawLine {
+
+    /**
+     * @param {WebGL2RenderingContext} gl 
+     */
+    init(gl) {
+        this.programInfo = twgl.createProgramInfo(gl, [lineVS, lineFS])
+
+        const points = [
+            v3.create(0, 0, 0),
+            v3.create(0.7, 0, 0),
+            v3.create(0.5, 0.8, 0),
+            v3.create(0.5, 1.0, 0),
+            v3.create(-2.0, -2.0, 0)
+        ]
+
+        this.bufferInfo = twgl.createBufferInfoFromArrays(gl,
+            createLineMesh(points)
+        )
+    }
+
+    render(gl, globalUniforms) {
+
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+        gl.useProgram(this.programInfo.program)
+        twgl.setUniforms(this.programInfo, {
+            ...globalUniforms,
+            u_lineWidth: 0.01,
+            u_lineColor: v3.create(0.5, 0.6, 0.2)
+        })
+        twgl.setBuffersAndAttributes(gl, this.programInfo, this.bufferInfo)
+        twgl.drawBufferInfo(gl, this.bufferInfo)
+        gl.disable(gl.BLEND)
     }
 }

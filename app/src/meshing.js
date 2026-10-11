@@ -291,3 +291,46 @@ function shortArcAngles(fromAngle, toAngle) {
         }
     }
 }
+
+/**
+ * 
+ * @param {[v3.Vec3]} points 
+ */
+export function createLineMesh(points) {
+
+    const position = []
+    const normal = []
+    const indices = []
+    const side = []
+
+    let k = 0; // index counter
+
+    for (let i = 1; i < points.length; i++) {
+
+        // points of the current segment
+        const p1 = points[i-1]
+        const p2 = points[i]
+
+        const n = v3.subtract(p2, p1)
+        v3.normalize(n, n)
+        perp(n, n)
+
+        position.push(...p1); normal.push(...n); side.push(1)
+        position.push(...p1); normal.push(...n); side.push(-1)
+
+        position.push(...p2); normal.push(...n); side.push(1)
+        position.push(...p2); normal.push(...n); side.push(-1)
+
+        // push indices for quad
+        indices.push(k, k+1, k+2)
+        indices.push(k+1, k+3, k+2)
+        k += 4;
+    }
+
+    return {
+        position: new Float32Array(position),
+        normal: new Float32Array(normal),
+        side: { numComponents: 1, data: new Float32Array(side) },
+        indices: new Uint32Array(indices),
+    }
+}
