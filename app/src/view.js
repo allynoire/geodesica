@@ -1,6 +1,6 @@
 import * as twgl from 'twgl.js'
 import { v3, m4 } from 'twgl.js';
-import { createDiskModelTriangle } from './meshing';
+import { boundsCircularArc, boundsLineSegment, createDiskModelGeodesic, createDiskModelTriangle, distancePointCircle, distancePointLine } from './meshing';
 import { randRange } from './utility';
 import earcut, { refine } from 'earcut';
 import { Batch } from './batch';
@@ -13,6 +13,7 @@ import standartFS from './shader/standart.frag'
 import standartVS from './shader/standart.vert'
 import gridFS from './shader/grid.frag'
 import geometryVS from './shader/geometry.vert'
+import triangleFS from './shader/triangle.frag'
 
 export class View {
 
@@ -34,20 +35,22 @@ export class View {
             v3.create(randRange(-1, 1), randRange(-1, 1), 0)
         ]
 
-        this.triangleRenderer = new TriangleMeshRenderer(40)
+        // this.triangleRenderer = new TriangleMeshRenderer(90)
+        this.triangleRenderer = new TriangleImplicitRenderer()
     }
 
     init() {
-
+        
+        this.gl.enable(this.gl.CULL_FACE)
         this.program = twgl.createProgramInfo(this.gl, [canvasVS, gridFS])
 
         this.vertices = twgl.createBufferInfoFromArrays(this.gl, {
-            indices: [ 0, 1, 2, 3, 1, 2 ],
+            indices: [ 0, 1, 2, 1, 3, 2 ],
             position: [
-                -1, -1, 0, 
-                -1, 1, 0, 
-                1, -1, 0,
-                1, 1, 0,
+                -1, -1, 0, // bottom left
+                1, -1, 0,  // bottom right
+                -1, 1, 0,  // top left
+                1, 1, 0,   // top right
             ]
         })
 
@@ -86,23 +89,7 @@ export class View {
         
 
         this.triangleRenderer.init(this.gl)
-        
-        
-        
-        // this.points = twgl.createBufferInfoFromArrays(this.gl, {
-        //     position: []
-        // })
-
-        // this.batch.drawPolygon(triangle)
-
-        // this.batch.drawPolygon([
-        //     0, 0, 0,
-        //     1, 0, 0,
-        //     1, 1, 0,
-        //     0, 1, 0,
-        // ])
-
-        // this.gl.disable(this.gl.DEPTH_TEST)
+    
     }
 
     attach() {
@@ -204,9 +191,9 @@ export class View {
 
     
         const t = time * 0.001
-        this.triangleRenderer.setABC({
-            c: v3.create(Math.cos(t), Math.sin(t), 0)
-        })
+        // this.triangleRenderer.setABC({
+        //     c: v3.create(Math.cos(t), Math.sin(t), 0)
+        // })
 
         this.triangleRenderer.render(gl, globalUniforms)
        
@@ -327,6 +314,133 @@ class TriangleMeshRenderer {
         twgl.setUniforms(this.programInfo, globalUniforms)
         twgl.setBuffersAndAttributes(gl, this.programInfo, this.bufferInfo)
         twgl.drawBufferInfo(gl, this.bufferInfo, gl.TRIANGLE)
+    }
+
+    setABC({a, b, c}) {
+        if (a !== undefined) {
+            v3.copy(a, this.a)
+            this.dirty = true
+        }
+        if (b !== undefined) {
+            v3.copy(b, this.b)
+            this.dirty = true
+        }
+        if (c !== undefined) {
+            v3.copy(c, this.c)
+            this.dirty = true
+        }
+    }
+}
+
+class TriangleImplicitRenderer {
+    constructor() {
+        this.a = v3.create(0, 0.5, 0)
+        this.b = v3.create(0.5, 0, 0)
+        this.c = v3.create(-0.5, 0, 0)
+        this.dirty = true
+    }
+
+    init(gl) {
+        this.programInfo = twgl.createProgramInfo(gl, [geometryVS, triangleFS])
+        this.bufferInfo = twgl.createBufferInfoFromArrays(gl, {
+            indices: [ 0, 1, 2, 1, 3, 2 ],
+            position: [
+                -1, -1, 0, // bottom left
+                1, -1, 0,  // bottom right
+                -1, 1, 0,  // top left
+                1, 1, 0,   // top right
+            ]
+        })
+        
+        // this.aabbPorgramInfo = twgl.createProgramInfo(gl, [geometryVS, testFS])
+        // this.aabbInfo = twgl.createBufferInfoFromArrays(gl, {
+        //     indices: [ 0, 1, 2, 1, 3, 2 ],
+        //     position: [
+        //         -1, -1, 0, // bottom left
+        //         1, -1, 0,  // bottom right
+        //         -1, 1, 0,  // top left
+        //         1, 1, 0,   // top right
+        //     ]
+        // })
+    }
+
+    refresh(gl) { 
+        const { a, b, c } = this 
+        const edges = []
+        const bounds = []
+
+        for (const [v1, v2, w] of [[a, b, c], [b, c, a], [c, a, b]]) {
+            const g = createDiskModelGeodesic(v1, v2)
+            if (g.type == 'line') {
+                const sign = Math.sign(distancePointLine(w, g.normal, 0))
+                edges.push(sign * g.normal[0], sign * g.normal[1], 0)
+                bounds.push(boundsLineSegment(v1, v2))
+            }
+            else {
+                const sign = Math.sign(distancePointCircle(w, g.center, g.radius))
+                edges.push(g.center[0], g.center[1], sign * g.radius),
+                bounds.push(boundsCircularArc(v1, v2, g.center, g.radius))
+            }
+        }
+
+
+        this.uniforms = {
+            u_edges: edges,
+            u_vertices: [
+                a[0], a[1],
+                b[0], b[1],
+                c[0], c[1]
+            ]
+        }
+
+        const aabb = bounds.reduce((a, b) => ({
+            min_x: Math.min(a.min_x, b.min_x),
+            max_x: Math.max(a.max_x, b.max_x),
+            min_y: Math.min(a.min_y, b.min_y),
+            max_y: Math.max(a.max_y, b.max_y)
+        }))
+
+        // NOTE: not constraining this further to bounding box since we expect only valid triangles, further can be left undefined for bad triangles
+        const aabbVertices = [
+            aabb.min_x, aabb.min_y, 0,
+            aabb.max_x, aabb.min_y, 0,
+            aabb.min_x, aabb.max_y, 0,
+            aabb.max_x, aabb.max_y, 0 
+        ]
+
+        // twgl.setAttribInfoBufferFromArray(gl,
+        //     this.aabbInfo.attribs.a_position,
+        //     aabbVertices
+        // )
+
+        twgl.setAttribInfoBufferFromArray(gl,
+            this.bufferInfo.attribs.a_position,
+            aabbVertices
+        ) 
+        
+    }
+
+    render(gl, globalUniforms) {
+        if (this.dirty) {
+            this.refresh(gl)
+            this.dirty = false
+        }
+
+        // gl.useProgram(this.aabbPorgramInfo.program)
+        // twgl.setUniforms(this.aabbPorgramInfo, globalUniforms)
+        // twgl.setBuffersAndAttributes(gl, this.aabbPorgramInfo, this.aabbInfo)
+        // twgl.drawBufferInfo(gl, this.aabbInfo)
+
+        gl.useProgram(this.programInfo.program)
+        twgl.setUniforms(this.programInfo, {
+            ...globalUniforms,
+            ...this.uniforms
+        })
+        twgl.setBuffersAndAttributes(gl, this.programInfo, this.bufferInfo)
+        twgl.drawBufferInfo(gl, this.bufferInfo, gl.TRIANGLE)
+
+        
+
     }
 
     setABC({a, b, c}) {

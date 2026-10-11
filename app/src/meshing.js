@@ -142,7 +142,7 @@ function createPolar(v) {
  * @param {v3} a 
  * @param {v3} b 
  */
-function createDiskModelGeodesic(a, b) {
+export function createDiskModelGeodesic(a, b) {
     const l1 = createPolar(a)
     const l2 = createPolar(b)
     const x = v3.cross(l1, l2)
@@ -167,7 +167,7 @@ function createDiskModelGeodesic(a, b) {
 }
 
 /**
- * 
+ * Returns the polar angle of a vector in the range [0, 2π]
  * @param {v3.Vec3} v 
  */
 function angle(v) {
@@ -193,4 +193,101 @@ function partitionEvenly(n, k) {
         arr[i] = div + (i < rem ? 1 : 0)
     }
     return arr
+}
+
+/**
+ * 
+ * @param {v3.Vec3} point 
+ * @param {v3.Vec3} center
+ * @param {number} radius 
+ */
+export function distancePointCircle(point, center, radius) {
+    return v3.distance(point, center) - radius
+}
+
+export function distancePointLine(point, normal, distance) {
+    return v3.dot(point, normal) - distance
+}
+
+/**
+ * 
+ * @param {v3.Vec3} a 
+ * @param {v3.Vec3} b 
+ */
+export function boundsLineSegment(a, b) {
+    const min_x = Math.min(a[0], b[0])
+    const max_x = Math.max(a[0], b[0])
+    const min_y = Math.min(a[1], b[1])
+    const max_y = Math.max(a[1], b[1])
+    return { min_x, max_x, min_y, max_y }
+}
+
+/**
+ * 
+ * @param {v3.Vec3} center 
+ * @param {number} radius 
+ * @param {number} fromAngle 
+ * @param {number} toAngle 
+ */
+export function boundsCircularArc(a, b, center, radius) {   
+    let min_x = Math.min(a[0], b[0])
+    let max_x = Math.max(a[0], b[0])
+    let min_y = Math.min(a[1], b[1])
+    let max_y = Math.max(a[1], b[1])
+
+    const [fromAngle, toAngle] = shortArcAngles(
+        angle(v3.subtract(a, center)),
+        angle(v3.subtract(b, center))
+    )
+    
+    for (const angle of [0, 0.5 * Math.PI, Math.PI, 1.5 * Math.PI]) {
+        // console.log(
+        //     `(${a}) (${b}):`,
+        //     `${deg(fromAngle)} < ${deg(angle)} < ${deg(toAngle)}:`,
+        //     `${fromAngle < angle && angle < toAngle}`
+        // )
+        
+        // TODO: find a better algorithm to check whether an angle is contained the short circualr arc.
+        if (fromAngle < angle && angle < toAngle 
+            || fromAngle < angle + TWO_PI && angle + TWO_PI <  toAngle
+        ) {
+            const extrema_x = center[0] + radius * Math.cos(angle)
+            const extrema_y = center[1] + radius * Math.sin(angle)
+            min_x = Math.min(min_x, extrema_x)
+            max_x = Math.max(max_x, extrema_x)
+            min_y = Math.min(min_y, extrema_y)
+            max_y = Math.max(max_y, extrema_y)
+        }
+    }
+
+    return { min_x, max_x, min_y, max_y }
+}
+
+function deg(rad) {
+    return Math.round(rad / Math.PI * 180)
+}
+
+/**
+ * 
+ * @param {number} fromAngle angle in range [0, 2π]
+ * @param {number} toAngle anglein range [0, 2π]
+ */
+function shortArcAngles(fromAngle, toAngle) {
+    
+    if (Math.abs(fromAngle - toAngle) < PI) {
+        if (fromAngle < toAngle) {
+            return [fromAngle, toAngle]
+        }
+        else {
+            return [toAngle, fromAngle]
+        }
+    }
+    else {
+        if (fromAngle < toAngle) {
+            return [toAngle, fromAngle + TWO_PI]
+        }
+        else {
+            return [fromAngle, toAngle + TWO_PI]
+        }
+    }
 }

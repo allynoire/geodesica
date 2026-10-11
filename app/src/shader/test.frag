@@ -8,6 +8,6 @@ out vec4 o_color;
 
 void main() {
     // if (0.0 < v_coord.x && v_coord.x < 1.0 && 0.0 < v_coord.y && v_coord.y < 1.0) {
-        o_color = vec4(0, 1, 0, 1);
+        o_color = vec4(1, 1, 0, 1);
     // }
 }
