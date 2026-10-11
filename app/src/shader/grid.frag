@@ -20,6 +20,7 @@ in vec2 v_coord;
 out vec4 o_color;
 
 uniform mat4 u_viewMatrix;
+uniform mat4 u_projectionMatrix;
 uniform vec2 u_resolution;
 
 // Grid Unifroms
@@ -32,7 +33,7 @@ void main() {
     float lineThickness = 1. / u_resolution.y;
     vec2 z = v_coord;
 
-    mat4 mvp = u_viewMatrix;
+    mat4 mvp = u_projectionMatrix * u_viewMatrix;
     vec2 scale = vec2(length(mvp[0]), length(mvp[1]));
 
     vec4 Z = vec4(z, vec2(2./length(scale)));

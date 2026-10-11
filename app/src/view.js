@@ -21,9 +21,10 @@ export class View {
         canvas
     }) {
         this.gl = twgl.getContext(canvas)
-        // this.viewMatrix = m4.create()
-        this.viewMatrix = m4.create()
-        this.invViewMatrix = m4.create()
+        this.projectionMatrix = m4.identity()
+        this.invProjectionMatrix = m4.identity()
+        this.viewMatrix = m4.scaling(v3.create(1/3, 1/3, 1/3))
+        this.invViewMatrix = m4.identity()
         this.resolution = v3.create()
         this.batch = new Batch()
         this.devicePixelRatio = window.devicePixelRatio
@@ -97,6 +98,8 @@ export class View {
         this.resizeObserver.observe(this.gl.canvas)
 
         this.gl.canvas.addEventListener('pointermove', this.input.bind(this))
+        this.gl.canvas.addEventListener('wheel', this.input.bind(this))
+        
         document.addEventListener('keydown', this.input.bind(this))
         this.resize()
     }
@@ -113,12 +116,48 @@ export class View {
         if (ev instanceof PointerEvent) {
             switch (ev.type) {
             case 'pointermove':
+                
                 v3.copy(
                     this.displayToWorld(ev.offsetX, ev.offsetY),
                     this.cursorPosition
                 )
+
+                if (ev.buttons & 1 == 1) {
+
+                    const delta = v3.create(ev.movementX, ev.movementY, 0);
+                    
+                    v3.mulScalar(delta, this.devicePixelRatio, delta)
+                    
+                    m4.transformDirection(
+                        this.screenToClipMatrix,
+                        delta, delta
+                    )
+
+                    m4.transformDirection(
+                        this.invProjectionMatrix,
+                        delta, delta
+                    )
+
+                    m4.transformDirection(
+                        this.invViewMatrix,
+                        delta, delta
+                    )
+
+                    m4.translate(this.viewMatrix, delta, this.viewMatrix)
+                }
                 break
             }
+        }
+        if (ev instanceof WheelEvent) {
+            const SCALE_FACTOR = 1.1
+
+            const s = ev.deltaY > 0 ? (1 / SCALE_FACTOR) : SCALE_FACTOR
+            const scale = v3.create(s, s, s)
+
+            const offset = v3.mulScalar(this.cursorPosition, (1 - s))
+
+            m4.translate(this.viewMatrix, offset, this.viewMatrix)
+            m4.scale(this.viewMatrix, scale, this.viewMatrix)
         }
         if (ev instanceof KeyboardEvent) {
             // if (ev.repeat) { return1 }
@@ -147,20 +186,19 @@ export class View {
         
         this.gl.viewport(0, 0, width, height)
         
-        const s = 3
-        const w = s * width / width
-        const h = s * height / width
+        const w = width / width
+        const h = height / width
 
         // update view matrix
         m4.ortho(
             -w, w,
             -h, h,
             -100, 100,
-            this.viewMatrix
+            this.projectionMatrix
         )
 
         // update inverse view matrix
-        m4.inverse(this.viewMatrix, this.invViewMatrix)
+        m4.inverse(this.projectionMatrix, this.invProjectionMatrix)
 
         // update screen to clip matrix
         m4.ortho(
@@ -177,7 +215,14 @@ export class View {
 
         const gl = this.gl
 
+        // m4.rotationZ(time * 1e-3, this.viewMatrix)
+        
+        m4.inverse(this.viewMatrix, this.invViewMatrix)
+
+
         const globalUniforms = {
+            u_projectionMatrix: this.projectionMatrix,
+            u_invProjectionMatrix: this.invProjectionMatrix,
             u_viewMatrix: this.viewMatrix,
             u_invViewMatrix: this.invViewMatrix,
             u_resolution: [ this.gl.canvas.width, this.gl.canvas.height],
@@ -226,7 +271,12 @@ export class View {
             this.screenToClipMatrix,
             pos, pos
         )
-        // clip space -> world
+        // clip space -> view
+        m4.transformPoint(
+            this.invProjectionMatrix,
+            pos, pos
+        )
+        // view -> world
         m4.transformPoint(
             this.invViewMatrix,
             pos, pos
