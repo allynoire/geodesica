@@ -57,13 +57,23 @@ void main() {
         min(sdEdge(pos, u_edges[1]), sdEdge(pos, u_edges[2]))
     );
 
-    // if negative we're on the wrong side, discard
-    if (dist < 0.0) { discard;}
+    // anti-aliasing distance
+    // NOTE: we push the edge slightly outwards, instead of inwards.
+    //       this avoids a visible gap between two adjacent triangles.
+    float aawidth = fwidth(dist);
 
+    // discrard the fragment if it is outside the triangle
+    if (dist < -aawidth) { discard;}
+
+    // interpolating vertex colors
     vec3 w = gyrobarycentric(pos);
     vec3 color = COLORS * w;
 
-    o_color = vec4(color, 1);
+    // anti aliasing
+    float a  = smoothstep(-aawidth, 0.0, dist);
+
+    // NOTE: using premultiplied alpha
+    o_color = vec4(color, 1) * a; 
 }
 
 

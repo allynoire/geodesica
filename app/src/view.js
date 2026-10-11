@@ -40,7 +40,7 @@ export class View {
         // this.triangleRenderer = new TriangleImplicitRenderer()
         this.renderers = []
 
-        for (let i = 0; i < 1000; i++) {
+        for (let i = 0; i < 2; i++) {
             this.renderers.push(new TriangleImplicitRenderer())
             // this.renderers.push(new TriangleMeshRenderer(30))
         }
@@ -161,17 +161,23 @@ export class View {
         if (ev instanceof KeyboardEvent) {
             // if (ev.repeat) { return1 }
 
-            // switch (ev.key) {
-            // case '1': 
-            //     this.triangleRenderer.setABC({a: this.cursorPosition})
-            //     break
-            // case '2':
-            //     this.triangleRenderer.setABC({b: this.cursorPosition})
-            //     break
-            // case '3':
-            //     this.triangleRenderer.setABC({c: this.cursorPosition})
-            //     break
-            // }
+            const a = this.renderers[0]
+            const b = this.renderers[1]
+            switch (ev.key) {
+            case '1': 
+                a.setABC({a: this.cursorPosition})
+                break
+            case '2':
+                a.setABC({b: this.cursorPosition})
+                b.setABC({b: this.cursorPosition})
+                break
+            case '3':
+                a.setABC({c: this.cursorPosition})
+                b.setABC({c: this.cursorPosition})
+                break
+            case '4':
+                b.setABC({a: this.cursorPosition})
+            }
 
         }
     }
@@ -231,11 +237,11 @@ export class View {
         twgl.drawBufferInfo(gl, this.quadInfo);
 
         for (const renderer of this.renderers) {
-            renderer.setABC({
-                a: randVec(),
-                b: randVec(),
-                c: randVec()
-            })
+            // renderer.setABC({
+            //     a: randVec(),
+            //     b: randVec(),
+            //     c: randVec()
+            // })
             renderer.render(gl, globalUniforms)
         }
        
@@ -460,6 +466,11 @@ class TriangleImplicitRenderer {
         
     }
 
+    /**
+     * 
+     * @param {WebGL2RenderingContext} gl 
+     * @param {*} globalUniforms 
+     */
     render(gl, globalUniforms) {
         if (this.dirty) {
             this.refresh(gl)
@@ -471,6 +482,8 @@ class TriangleImplicitRenderer {
         // twgl.setBuffersAndAttributes(gl, this.aabbPorgramInfo, this.aabbInfo)
         // twgl.drawBufferInfo(gl, this.aabbInfo)
 
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
         gl.useProgram(this.programInfo.program)
         twgl.setUniforms(this.programInfo, {
             ...globalUniforms,
@@ -479,7 +492,7 @@ class TriangleImplicitRenderer {
         twgl.setBuffersAndAttributes(gl, this.programInfo, this.bufferInfo)
         twgl.drawBufferInfo(gl, this.bufferInfo, gl.TRIANGLE)
 
-        
+        gl.disable(gl.BLEND)
 
     }
 
